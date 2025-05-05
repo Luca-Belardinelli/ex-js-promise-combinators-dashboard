@@ -39,7 +39,7 @@ async function getDashboardData(query) {
         const weathersData = await weathersresponse.json();
         const airportsData = await airportsresponse.json();
 
-        // simulazione informazioni 
+        // // simulazione informazioni 
 
         // const destinationData = [{ name: "london", country: "united kingdom" }];
         // const weathersData = [{ temperature: 30, weather_description: "Piovoso" }];
@@ -47,23 +47,68 @@ async function getDashboardData(query) {
 
 
         // dati d aprendere dalle chiamate
-        const city = destinationData[0].name;
-        const country = destinationData[0].country;
-        const temperature = weathersData[0].temperature;
-        const weather = weathersData[0].weather_description;
-        const airport = airportsData[0].name;
-
-        // creazione oggetto 
-        const dashboardData = { city, country, temperature, weather, airport };
-
-        console.log(`${dashboardData.city} is in ${dashboardData.country}.\n` +
-            `Today there are ${dashboardData.temperature} degrees and the weather is ${dashboardData.weather}.\n` +
-            `The main airport is ${dashboardData.airport}.\n`)
+        return {
+            city: destinationData[0].name,
+            country: destinationData[0].country,
+            temperature: weathersData[0].temperature,
+            weather: weathersData[0].weather_description,
+            airport: airportsData[0].name
+        }
 
     } catch (error) {
-        throw new Error("Non è stato possibile proseguire con la ricerca");
+        console.log(error => (`"Non è stato possibile proseguire con la ricerca", ${error}`))
     }
 
 }
 
-getDashboardData("london")
+getDashboardData('london')
+    .then(data => {
+        console.log('Dashboard data:', data);
+        console.log(`${data.city} is in ${data.country}.\n` +
+            `Today there are ${data.temperature} degrees and the weather is ${data.weather}.\n` +
+            `The main airport is ${data.airport}.\n`);
+    })
+    .catch(error => console.error(error));
+
+
+
+
+//     🎯 Bonus 1 - Risultato vuoto
+// Se l’array di ricerca è vuoto, invece di far fallire l'intera funzione,
+//  semplicemente i dati relativi a quella chiamata verranno settati a null e  la frase relativa non viene stampata.
+// Testa la funzione con la query “vienna” (non trova il meteo).
+
+// // Risposta API
+
+// {
+
+//   city: "Vienna",
+
+//   country: "Austria",
+
+//   temperature: null,
+
+//     weather: null,
+
+//   airport: "Vienna International Airport"
+
+// }
+
+//
+
+// // Output in console
+
+// Vienna is in Austria.
+
+// The main airport is Vienna International Airport.
+
+
+
+// 🎯 Bonus 2 - Chiamate fallite
+// Attualmente, se una delle chiamate fallisce, **Promise.all()** rigetta l'intera operazione.
+
+// Modifica `getDashboardData()` per usare **Promise.allSettled()**, in modo che:
+
+//     Se una chiamata fallisce, i dati relativi a quella chiamata verranno settati a null.
+//     Stampa in console un messaggio di errore per ogni richiesta fallita.
+//     Testa la funzione con un link fittizio per il meteo (es. https://www.meteofittizio.it).
